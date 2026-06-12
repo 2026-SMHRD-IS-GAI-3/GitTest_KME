@@ -1,0 +1,13 @@
+/* Nasalization 폰트 */
+@font-face {
+  font-family: 'Nasalization';
+  src: url('https://db.onlinewebfonts.com/t/e4cc3c4d6bd7c4148ec5095517caa687.eot');
+  src: url('https://db.onlinewebfonts.com/t/e4cc3c4d6bd7c4148ec5095517caa687.eot?#iefix') format('embedded-opentype'),
+       url('https://db.onlinewebfonts.com/t/e4cc3c4d6bd7c4148ec5095517caa687.woff2') format('woff2'),
+       url('https://db.onlinewebfonts.com/t/e4cc3c4d6bd7c4148ec5095517caa687.woff') format('woff'),
+       url('https://db.onlinewebfonts.com/t/e4cc3c4d6bd7c4148ec5095517caa687.ttf') format('truetype'),
+       url('https://db.onlinewebfonts.com/t/e4cc3c4d6bd7c4148ec5095517caa687.svg#Nasalization Rg') format('svg');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}

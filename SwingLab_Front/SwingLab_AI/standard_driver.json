@@ -1,0 +1,18 @@
+{
+  "ADDRESS": {
+    "knee": 137.3865,
+    "spine": 132.7335
+  },
+  "BACKSWING": {
+    "knee": 126.2374,
+    "spine": 131.2205
+  },
+  "DOWNSWING": {
+    "knee": 142.98,
+    "spine": 130.9
+  },
+  "IMPACT": {
+    "knee": 166.9183,
+    "spine": 161.272
+  }
+}

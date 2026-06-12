@@ -1,0 +1,40 @@
+{
+  "ADDRESS": {
+    "shoulder_rot": 3.4483,
+    "hip_rot": 3.9492,
+    "x_factor": -0.5008,
+    "hip_x": 0.4668,
+    "head_x": 0.4582,
+    "shoulder_mid_x": 0.4619,
+    "left_knee_x": 0.5059,
+    "right_knee_x": 0.4211
+  },
+  "BACKSWING": {
+    "shoulder_rot": 53.3,
+    "hip_rot": 2.9425,
+    "x_factor": 50.3575,
+    "hip_x": 0.5047,
+    "head_x": 0.5003,
+    "shoulder_mid_x": 0.4983,
+    "left_knee_x": 0.522,
+    "right_knee_x": 0.4735
+  },
+  "DOWNSWING": {
+    "shoulder_rot": 37.8077,
+    "hip_rot": 4.3738,
+    "x_factor": 33.4338,
+    "hip_x": 0.5038,
+    "head_x": 0.499,
+    "shoulder_mid_x": 0.4956,
+    "left_knee_x": 0.5208,
+    "right_knee_x": 0.4745
+  },
+  "IMPACT": {
+    "x_factor": 21.5789,
+    "hip_x": 0.4924,
+    "head_x": 0.4805,
+    "shoulder_mid_x": 0.4825,
+    "left_knee_x": 0.5125,
+    "right_knee_x": 0.4523
+  }
+}
