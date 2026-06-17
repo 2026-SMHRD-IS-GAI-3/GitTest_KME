@@ -94,7 +94,6 @@ export function ProfileEdit() {
         "http://localhost:8090/SwingLab/updateProfile",
         {
           currentEmail: currentEmail,
-          email: formData.email,
           phone: formData.phone,
           height: Number(formData.height),
           weight: Number(formData.weight),
@@ -108,7 +107,6 @@ export function ProfileEdit() {
       console.log("프로필 수정 결과:", res.data);
 
       if (res.data.success === true) {
-        sessionStorage.setItem("userEmail", formData.email);
 
         alert("프로필이 성공적으로 수정되었습니다!");
         navigate("/mypage");
@@ -170,13 +168,13 @@ export function ProfileEdit() {
             </label>
             <input
               type="email"
-              name="email"
               value={formData.email}
-              onChange={handleChange}
-              placeholder="example@email.com"
-              required
-              className="w-full px-4 py-3 border border-[#E5E5E5] rounded-lg bg-white text-[#1A1A1A] placeholder-[#CCCCCC] focus:outline-none focus:ring-2 focus:ring-[#1D9E75] focus:border-transparent"
+              disabled
+              className="w-full px-4 py-3 border border-[#E5E5E5] rounded-lg bg-[#F5FAF8] text-[#888780] cursor-not-allowed"
             />
+            <p className="text-xs text-[#888780] mt-1.5">
+              이메일은 수정할 수 없습니다
+            </p>
           </div>
 
           {/* 휴대폰번호 */}

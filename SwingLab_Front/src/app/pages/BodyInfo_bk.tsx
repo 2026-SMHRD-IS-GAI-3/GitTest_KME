@@ -1,8 +1,6 @@
 import { useState, useRef } from "react";
 import { useNavigate } from "react-router";
 import axios from "axios";
-import armsExample from "../../imports/arms-example.png.png";
-import attentionExample from "../../imports/attention-example.png.png";
 
 type Step = "input" | "upload" | "result";
 
@@ -204,42 +202,42 @@ export function BodyInfo() {
 
       setMetrics(result);
 
-      localStorage.setItem(
-        "bodyInfo",
-        JSON.stringify({
-          height: h,
-          weight: w,
-          dominantHand: dominantHand,
-        })
-      );
+localStorage.setItem(
+  "bodyInfo",
+  JSON.stringify({
+    height: h,
+    weight: w,
+    dominantHand: dominantHand,
+  })
+);
 
-      localStorage.setItem("bodyMetrics", JSON.stringify(result));
-      localStorage.setItem("bodyTypeCompleted", "true");
+localStorage.setItem("bodyMetrics", JSON.stringify(result));
+localStorage.setItem("bodyTypeCompleted", "true");
 
-      const saveRes = await axios.post(
-        "http://localhost:8090/SwingLab/saveBodyAnalysis",
-        {
-          height: h,
-          weight: w,
-          shoulderHipRatio: Number(res.data.shoulderToHipRatio),
-          armLengthRatio: Number(res.data.wingspanRatio),
-          armLengthType:
-            res.data.armType === "장팔"
-              ? "LONG"
-              : res.data.armType === "단팔"
-              ? "SHORT"
-              : "NORMAL",
-          handType: dominantHand,
-          bodyCode: res.data.bodyCode,
-        },
-        {
-          withCredentials: true,
-        }
-      );
+const saveRes = await axios.post(
+  "http://localhost:8090/SwingLab/saveBodyAnalysis",
+  {
+    height: h,
+    weight: w,
+    shoulderHipRatio: Number(res.data.shoulderToHipRatio),
+    armLengthRatio: Number(res.data.wingspanRatio),
+    armLengthType:
+      res.data.armType === "장팔"
+        ? "LONG"
+        : res.data.armType === "단팔"
+        ? "SHORT"
+        : "NORMAL",
+    handType: dominantHand,
+    bodyCode: res.data.bodyCode,
+  },
+  {
+    withCredentials: true,
+  }
+);
 
-      console.log("체형 분석 DB 저장 결과:", saveRes.data);
+console.log("체형 분석 DB 저장 결과:", saveRes.data);
 
-      setStep("result");
+setStep("result");
     } catch (err) {
       console.error("체형 분석 실패:", err);
       alert("Python 분석 서버 연결 실패");
@@ -369,7 +367,6 @@ export function BodyInfo() {
       desc,
       icon,
       preview,
-      exampleImage,
       inputRef,
       onClear,
       onChange,
@@ -378,7 +375,6 @@ export function BodyInfo() {
       desc: string;
       icon: string;
       preview: string | null;
-      exampleImage: string;
       inputRef: React.RefObject<HTMLInputElement | null>;
       onClear: () => void;
       onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
@@ -413,13 +409,13 @@ export function BodyInfo() {
             <img
               src={preview}
               alt={label}
-              className="w-full h-[260px] rounded-xl object-cover"
+              className="w-full rounded-xl object-cover max-h-48"
             />
 
             <button
               type="button"
               onClick={onClear}
-              className="absolute top-2 right-2 w-8 h-8 rounded-full bg-black/50 text-white flex items-center justify-center text-sm"
+              className="absolute top-2 right-2 w-7 h-7 rounded-full bg-black/50 text-white flex items-center justify-center text-xs"
             >
               ✕
             </button>
@@ -428,39 +424,14 @@ export function BodyInfo() {
           <button
             type="button"
             onClick={() => inputRef.current?.click()}
-            className="relative w-full h-[260px] overflow-hidden border-2 border-dashed border-[#D0EDE4] rounded-xl bg-[#F5FAF8] hover:bg-[#E8F7F1] transition-colors"
+            className="w-full py-7 border-2 border-dashed border-[#D0EDE4] rounded-xl flex flex-col items-center gap-2 bg-[#F5FAF8] hover:bg-[#E8F7F1] transition-colors"
           >
-            <img
-            src={exampleImage}
-            alt={`${label} 예시`}
-            className="
-              absolute
-              inset-0
-              w-full
-              h-full
-              object-contain
-              object-top
-              opacity-35
-              px-6
-              py-2
-            "
-            />
-
-            <div className="absolute inset-0 bg-white/45" />
-
-            <div className="relative z-10 h-full flex flex-col items-center justify-center gap-2">
-              <div className="w-11 h-11 rounded-xl bg-[#E1F5EE] flex items-center justify-center text-xl">
-                📸
-              </div>
-
-              <p className="text-xs font-bold text-[#1D9E75]">
-                사진 선택 또는 촬영
-              </p>
-
-              <p className="text-[11px] text-[#0F6E56] font-medium">
-                예시처럼 촬영해주세요
-              </p>
+            <div className="w-10 h-10 rounded-xl bg-[#E1F5EE] flex items-center justify-center text-xl">
+              📸
             </div>
+            <p className="text-xs font-bold text-[#1D9E75]">
+              사진 선택 또는 촬영
+            </p>
           </button>
         )}
       </div>
@@ -510,7 +481,6 @@ export function BodyInfo() {
             desc="양팔을 어깨 높이로 양옆으로 쭉 벌려주세요"
             icon="🙌"
             preview={armsPhoto}
-            exampleImage={armsExample}
             inputRef={armsFileInputRef}
             onClear={() => {
               setArmsPhoto(null);
@@ -527,7 +497,6 @@ export function BodyInfo() {
             desc="팔을 몸에 붙이고 똑바로 서주세요"
             icon="🧍"
             preview={attentionPhoto}
-            exampleImage={attentionExample}
             inputRef={attentionFileInputRef}
             onClear={() => {
               setAttentionPhoto(null);

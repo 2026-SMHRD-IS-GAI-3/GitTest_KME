@@ -264,34 +264,16 @@ export function CommunityPost() {
               </div>
             </div>
             <div className="flex items-center gap-4 text-sm text-[#888780]">
-              <span>조회 {post.viewCount}</span>
-              <span>댓글 {post.comments}</span>
+            <span>조회 {post.views.toLocaleString()}</span>
+            <span>댓글 {post.comments}</span>
             </div>
           </div>
 
           {/* 본문 */}
-          <div className="text-[#1A1A1A] leading-relaxed whitespace-pre-line mb-6">
+          <div className="text-[#1A1A1A] leading-relaxed whitespace-pre-line mb-8">
             {post.content}
           </div>
 
-          {post.filePath && (
-            <div className="mt-4 mb-8">
-              {post.fileType === "image" ? (
-                <img
-                  src={`http://localhost:8090/SwingLab/${post.filePath}`}
-                  alt="첨부 이미지"
-                  className="w-full rounded-xl border border-[#E5E5E5]"
-                />
-              ) : (
-                <video
-                  src={`http://localhost:8090/SwingLab/${post.filePath}`}
-                  controls
-                  className="w-full rounded-xl border border-[#E5E5E5]"
-                />
-              )}
-            </div>
-          )}
-          
           {/* 좋아요 버튼 */}
           <div className="flex justify-center">
             <button

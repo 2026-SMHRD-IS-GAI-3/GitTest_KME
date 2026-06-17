@@ -144,14 +144,14 @@ export function FindAccount() {
   };
 
   return (
-    <div className="min-h-screen bg-[#F5FAF8] flex flex-col py-16 px-5">
+    <div className="min-h-screen bg-[#F5FAF8] flex flex-col pt-3 pb-16 px-5">
       <div className="max-w-md w-full mx-auto">
         <button
           onClick={() => navigate("/login")}
-          className="flex items-center gap-1 text-[#888780] text-sm mb-8"
+          className="flex items-center gap-1 text-[#888780] text-sm mb-6 hover:text-[#1D9E75]"
         >
           ← 로그인으로 돌아가기
-        </button>
+      </button>
 
         <div className="text-center mb-8">
           <h1 className="text-2xl font-bold text-[#1A1A1A] mb-1">

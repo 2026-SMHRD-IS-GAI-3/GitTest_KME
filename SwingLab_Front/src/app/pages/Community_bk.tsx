@@ -22,13 +22,115 @@ interface Post {
   comments: Comment[];
   commentCount: number;
   views: number;
-  fileType?: string;
-  filePath?: string;
   timestamp: string;
   tags: string[];
   image?: string;
   isSample?: boolean;
 }
+
+const GOLF_IMAGES = [
+  "https://images.unsplash.com/photo-1535131749006-b7f58c99034b?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixlib=rb-4.1.0&q=80&w=800",
+  "https://images.unsplash.com/photo-1593282153762-a41e3cceb06c?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixlib=rb-4.1.0&q=80&w=800",
+  "https://images.unsplash.com/photo-1592919505780-303950717480?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixlib=rb-4.1.0&q=80&w=800",
+  "https://images.unsplash.com/photo-1611374243147-44a702c2d44c?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixlib=rb-4.1.0&q=80&w=800",
+];
+
+const SAMPLE_POSTS: Post[] = [
+  {
+    id: "sample-1",
+    author: "김프로",
+    avatar: "🏌️",
+    grade: "프로",
+    title: "드라이버 비거리 20m 늘린 후기",
+    content:
+      "안녕하세요! 최근 3개월간 스윙 교정으로 드라이버 비거리를 20m 늘렸어요. SwingLab AI 피드백 덕분에 제 폼의 문제점을 정확히 파악할 수 있었습니다.",
+    category: "스윙분석",
+    comments: [
+      {
+        id: "sample-c1",
+        userId: 0,
+        author: "이골퍼",
+        avatar: "👩",
+        text: "대단하네요! 어떤 연습을 하셨나요?",
+        timestamp: "1시간 전",
+      },
+      {
+        id: "sample-c2",
+        userId: 0,
+        author: "박버디",
+        avatar: "👨",
+        text: "저도 하체 리드 연습 중인데 참고하겠습니다.",
+        timestamp: "30분 전",
+      },
+    ],
+    commentCount: 2,
+    views: 892,
+    timestamp: "2시간 전",
+    tags: ["드라이버", "비거리", "스윙교정"],
+    image: GOLF_IMAGES[0],
+    isSample: true,
+  },
+  {
+    id: "sample-2",
+    author: "이골퍼",
+    avatar: "👩",
+    grade: "세미프로",
+    title: "초보자를 위한 아이언 추천 부탁해요",
+    content:
+      "골프 시작한 지 3개월 됐는데 아이언을 새로 사려고 합니다. 예산은 100만원 정도인데 추천 부탁드려요!",
+    category: "장비추천",
+    comments: [
+      {
+        id: "sample-c3",
+        userId: 0,
+        author: "최파",
+        avatar: "👴",
+        text: "미즈노 JPX 시리즈 추천드립니다.",
+        timestamp: "3시간 전",
+      },
+    ],
+    commentCount: 1,
+    views: 456,
+    timestamp: "4시간 전",
+    tags: ["아이언", "초보", "장비추천"],
+    image: GOLF_IMAGES[2],
+    isSample: true,
+  },
+  {
+    id: "sample-3",
+    author: "박버디",
+    avatar: "👨",
+    grade: "마스터",
+    title: "백스윙 탑 자세 체크포인트 공유합니다",
+    content:
+      "백스윙 탑에서 오버스윙 문제를 겪는 분들이 많습니다. 왼팔이 지면과 평행이 될 때 멈추는 연습이 가장 효과적이었습니다.",
+    category: "스윙분석",
+    comments: [],
+    commentCount: 0,
+    views: 1523,
+    timestamp: "5시간 전",
+    tags: ["백스윙", "탑", "자세교정"],
+    image: GOLF_IMAGES[1],
+    isSample: true,
+  },
+  {
+    id: "sample-4",
+    author: "정언더",
+    avatar: "🧑",
+    grade: "아마추어",
+    title: "오늘 처음으로 90타 깼어요! 🎉",
+    content:
+      "시작한 지 1년 만에 드디어 90타를 깼습니다. SwingLab으로 꾸준히 스윙 분석하고 교정한 보람이 있네요.",
+    category: "자유게시판",
+    comments: [],
+    commentCount: 0,
+    views: 2341,
+    timestamp: "1일 전",
+    tags: ["90타", "달성", "감사"],
+    image: GOLF_IMAGES[3],
+    isSample: true,
+  },
+];
 
 const GRADE_COLORS: Record<string, { bg: string; text: string }> = {
   마스터: { bg: "#FEF3E7", text: "#F59E0B" },
@@ -42,15 +144,9 @@ export function Community() {
   const navigate = useNavigate();
 
   const [selectedCategory, setSelectedCategory] = useState("전체");
-  const [posts, setPosts] = useState<Post[]>([]);
+  const [posts, setPosts] = useState<Post[]>(SAMPLE_POSTS);
   const [selectedPost, setSelectedPost] = useState<Post | null>(null);
   const [commentText, setCommentText] = useState("");
-
-  const [searchInput, setSearchInput] = useState("");
-  const [searchKeyword, setSearchKeyword] = useState("");
-  const [sortType, setSortType] = useState<"latest" | "comments" | "views">(
-    "latest"
-  );
 
   const [editingCommentId, setEditingCommentId] = useState("");
   const [editingCommentText, setEditingCommentText] = useState("");
@@ -72,10 +168,6 @@ export function Community() {
     return userId ? Number(userId) : 0;
   };
 
-  const handleSearch = () => {
-    setSearchKeyword(searchInput.trim());
-  };
-
   const loadPosts = async () => {
     try {
       const res = await axios.get(
@@ -94,38 +186,34 @@ export function Community() {
           category: item.category || "자유게시판",
           comments: [],
           commentCount: Number(item.commentCount || 0),
-          views: Number(item.viewCount || 0),
-          fileType: item.fileType || "",
-          filePath: item.filePath || "",
+          views: 0,
           timestamp: item.createdAt || "",
-          tags: item.tags ? String(item.tags).split(",") : [],
+          tags: [],
           image: item.imageUrl || "",
           isSample: false,
         }));
 
-        setPosts(dbPosts);
+        if (dbPosts.length > 0) {
+          setPosts(dbPosts);
+        } else {
+          setPosts(SAMPLE_POSTS);
+        }
+      } else {
+        setPosts(SAMPLE_POSTS);
       }
     } catch (error) {
       console.error("게시글 조회 실패:", error);
+      setPosts(SAMPLE_POSTS);
     }
   };
 
   const loadComments = async (post: Post) => {
+    if (post.isSample) {
+      setSelectedPost(post);
+      return;
+    }
+
     try {
-      await axios.post(
-        "http://localhost:8090/SwingLab/communityViewCount",
-        null,
-        {
-          params: { postId: post.id },
-          withCredentials: true,
-        }
-      );
-
-      const viewedPost = {
-        ...post,
-        views: post.views + 1,
-      };
-
       const res = await axios.get("http://localhost:8090/SwingLab/commentList", {
         params: { postId: post.id },
         withCredentials: true,
@@ -142,7 +230,7 @@ export function Community() {
         }));
 
         const updatedPost = {
-          ...viewedPost,
+          ...post,
           comments: dbComments,
           commentCount: dbComments.length,
         };
@@ -153,20 +241,40 @@ export function Community() {
           prev.map((p) => (p.id === post.id ? updatedPost : p))
         );
       } else {
-        setSelectedPost(viewedPost);
-
-        setPosts((prev) =>
-          prev.map((p) => (p.id === post.id ? viewedPost : p))
-        );
+        setSelectedPost(post);
       }
     } catch (error) {
-      console.error("게시글 조회/댓글 조회 실패:", error);
+      console.error("댓글 조회 실패:", error);
       setSelectedPost(post);
     }
   };
 
   const handleAddComment = async () => {
     if (!commentText.trim() || !selectedPost) return;
+
+    if (selectedPost.isSample) {
+      const newComment: Comment = {
+        id: String(Date.now()),
+        userId: getLoginUserId(),
+        author: "나",
+        avatar: "😊",
+        text: commentText.trim(),
+        timestamp: "방금",
+      };
+
+      const updatedPost = {
+        ...selectedPost,
+        comments: [...selectedPost.comments, newComment],
+        commentCount: selectedPost.commentCount + 1,
+      };
+
+      setSelectedPost(updatedPost);
+      setPosts((prev) =>
+        prev.map((p) => (p.id === updatedPost.id ? updatedPost : p))
+      );
+      setCommentText("");
+      return;
+    }
 
     const userId = sessionStorage.getItem("userId");
 
@@ -200,7 +308,30 @@ export function Community() {
   };
 
   const handleUpdateComment = async () => {
-    if (!editingCommentId || !editingCommentText.trim() || !selectedPost) return;
+    if (!editingCommentId || !editingCommentText.trim() || !selectedPost) {
+      return;
+    }
+
+    if (selectedPost.isSample) {
+      const updatedComments = selectedPost.comments.map((comment) =>
+        comment.id === editingCommentId
+          ? { ...comment, text: editingCommentText.trim() }
+          : comment
+      );
+
+      const updatedPost = {
+        ...selectedPost,
+        comments: updatedComments,
+      };
+
+      setSelectedPost(updatedPost);
+      setPosts((prev) =>
+        prev.map((p) => (p.id === updatedPost.id ? updatedPost : p))
+      );
+      setEditingCommentId("");
+      setEditingCommentText("");
+      return;
+    }
 
     const userId = sessionStorage.getItem("userId");
 
@@ -236,6 +367,24 @@ export function Community() {
 
   const handleDeleteComment = async (commentId: string) => {
     if (!selectedPost) return;
+
+    if (selectedPost.isSample) {
+      const updatedComments = selectedPost.comments.filter(
+        (comment) => comment.id !== commentId
+      );
+
+      const updatedPost = {
+        ...selectedPost,
+        comments: updatedComments,
+        commentCount: updatedComments.length,
+      };
+
+      setSelectedPost(updatedPost);
+      setPosts((prev) =>
+        prev.map((p) => (p.id === updatedPost.id ? updatedPost : p))
+      );
+      return;
+    }
 
     const userId = sessionStorage.getItem("userId");
 
@@ -275,6 +424,11 @@ export function Community() {
   const handleDeletePost = async () => {
     if (!selectedPost) return;
 
+    if (selectedPost.isSample) {
+      alert("예시 게시글은 삭제할 수 없습니다.");
+      return;
+    }
+
     const userId = sessionStorage.getItem("userId");
 
     if (!userId) {
@@ -308,32 +462,10 @@ export function Community() {
     }
   };
 
-  const filteredPosts = posts
-    .filter((post) => {
-      const categoryMatch =
-        selectedCategory === "전체" || post.category === selectedCategory;
-
-      const keyword = searchKeyword.trim().toLowerCase();
-
-      const searchMatch =
-        !keyword ||
-        post.title.toLowerCase().includes(keyword) ||
-        post.content.toLowerCase().includes(keyword) ||
-        post.author.toLowerCase().includes(keyword);
-
-      return categoryMatch && searchMatch;
-    })
-    .sort((a, b) => {
-      if (sortType === "comments") {
-        return b.commentCount - a.commentCount;
-      }
-
-      if (sortType === "views") {
-        return b.views - a.views;
-      }
-
-      return 0;
-    });
+  const filteredPosts =
+    selectedCategory === "전체"
+      ? posts
+      : posts.filter((post) => post.category === selectedCategory);
 
   if (selectedPost) {
     const gradeColor =
@@ -381,45 +513,41 @@ export function Community() {
               </div>
 
               <div className="text-xs text-[#888780]">
-                {selectedPost.timestamp} · {selectedPost.category} · 조회{" "}
-                {selectedPost.views}
+                {selectedPost.timestamp} · {selectedPost.category}
               </div>
             </div>
           </div>
 
-          {selectedPost.filePath &&
-            (selectedPost.fileType === "image" ? (
-              <img
-                src={`http://localhost:8090/SwingLab/${selectedPost.filePath}`}
-                alt={selectedPost.title}
-                className="w-full object-cover max-h-[320px]"
-              />
-            ) : (
-              <video
-                src={`http://localhost:8090/SwingLab/${selectedPost.filePath}`}
-                controls
-                className="w-full object-cover max-h-[320px]"
-              />
-            ))}
+          {selectedPost.image && (
+            <img
+              src={selectedPost.image}
+              alt={selectedPost.title}
+              className="w-full object-cover max-h-[320px]"
+            />
+          )}
 
           <div className="bg-white px-4 py-4">
-            <div className="flex justify-end gap-2 mb-3">
-              <button
-                onClick={() =>
-                  navigate(`/community/write?mode=edit&postId=${selectedPost.id}`)
-                }
-                className="px-3 py-1 rounded-lg text-xs font-medium bg-[#F5FAF8] text-[#1D9E75]"
-              >
-                수정
-              </button>
+            {!selectedPost.isSample && (
+              <div className="flex justify-end gap-2 mb-3">
+                <button
+                  onClick={() =>
+                    navigate(
+                      `/community/write?mode=edit&postId=${selectedPost.id}`
+                    )
+                  }
+                  className="px-3 py-1 rounded-lg text-xs font-medium bg-[#F5FAF8] text-[#1D9E75]"
+                >
+                  수정
+                </button>
 
-              <button
-                onClick={handleDeletePost}
-                className="px-3 py-1 rounded-lg text-xs font-medium bg-[#FEE2E2] text-red-600"
-              >
-                삭제
-              </button>
-            </div>
+                <button
+                  onClick={handleDeletePost}
+                  className="px-3 py-1 rounded-lg text-xs font-medium bg-[#FEE2E2] text-red-600"
+                >
+                  삭제
+                </button>
+              </div>
+            )}
 
             <h2 className="font-bold text-[#1A1A1A] mb-2">
               {selectedPost.title}
@@ -594,29 +722,6 @@ export function Community() {
           </button>
         </div>
 
-        <div className="bg-white px-4 py-3 border-b border-[#E5E5E5]">
-          <div className="relative">
-            <input
-              type="text"
-              value={searchInput}
-              onChange={(e) => setSearchInput(e.target.value)}
-              onKeyDown={(e) => {
-                if (e.key === "Enter") handleSearch();
-              }}
-              placeholder="제목, 내용, 작성자 검색"
-              className="w-full pl-3 pr-11 py-2 border border-[#E5E5E5] rounded-lg text-sm outline-none focus:ring-2 focus:ring-[#1D9E75]"
-            />
-
-            <button
-              type="button"
-              onClick={handleSearch}
-              className="absolute right-2 top-1/2 -translate-y-1/2 w-8 h-8 flex items-center justify-center text-[#1D9E75]"
-            >
-              🔍
-            </button>
-          </div>
-        </div>
-
         <div className="bg-white border-b border-[#E5E5E5] flex overflow-x-auto no-scrollbar">
           {categories.map((category) => (
             <button
@@ -633,43 +738,6 @@ export function Community() {
           ))}
         </div>
 
-        <div className="bg-white px-4 py-2 border-b border-[#E5E5E5]">
-          <div className="flex gap-2">
-            <button
-              onClick={() => setSortType("latest")}
-              className={`flex-1 py-2 rounded-lg text-xs ${
-                sortType === "latest"
-                  ? "bg-[#1D9E75] text-white"
-                  : "bg-[#F5FAF8] text-[#888780]"
-              }`}
-            >
-              최신순
-            </button>
-
-            <button
-              onClick={() => setSortType("comments")}
-              className={`flex-1 py-2 rounded-lg text-xs ${
-                sortType === "comments"
-                  ? "bg-[#1D9E75] text-white"
-                  : "bg-[#F5FAF8] text-[#888780]"
-              }`}
-            >
-              댓글순
-            </button>
-
-            <button
-              onClick={() => setSortType("views")}
-              className={`flex-1 py-2 rounded-lg text-xs ${
-                sortType === "views"
-                  ? "bg-[#1D9E75] text-white"
-                  : "bg-[#F5FAF8] text-[#888780]"
-              }`}
-            >
-              조회순
-            </button>
-          </div>
-        </div>
-
         <div className="space-y-2 pt-2 pb-6">
           {filteredPosts.map((post) => {
             const gradeColor =
@@ -678,8 +746,8 @@ export function Community() {
             return (
               <div
                 key={post.id}
-                className="bg-white cursor-pointer"
-                onDoubleClick={() => loadComments(post)}
+                className="bg-white"
+                onClick={() => loadComments(post)}
               >
                 <div className="flex items-center justify-between px-4 pt-3 pb-2">
                   <div className="flex items-center gap-2.5">
@@ -721,20 +789,13 @@ export function Community() {
                   </p>
                 </div>
 
-                {post.filePath &&
-                  (post.fileType === "image" ? (
-                    <img
-                      src={`http://localhost:8090/SwingLab/${post.filePath}`}
-                      alt={post.title}
-                      className="w-full object-cover max-h-[260px]"
-                    />
-                  ) : (
-                    <video
-                      src={`http://localhost:8090/SwingLab/${post.filePath}`}
-                      controls
-                      className="w-full object-cover max-h-[260px]"
-                    />
-                  ))}
+                {post.image && (
+                  <img
+                    src={post.image}
+                    alt={post.title}
+                    className="w-full object-cover max-h-[260px]"
+                  />
+                )}
 
                 <div className="flex items-center justify-between px-4 pt-2 pb-1">
                   <span className="text-xs text-[#888780]">
@@ -749,7 +810,7 @@ export function Community() {
                 <div className="flex items-center border-t border-[#F0F0F0] mx-4">
                   <button
                     className="flex items-center justify-center gap-1.5 flex-1 py-2.5 text-sm font-medium text-[#888780]"
-                    onDoubleClick={(e) => {
+                    onClick={(e) => {
                       e.stopPropagation();
                       loadComments(post);
                     }}
@@ -761,12 +822,6 @@ export function Community() {
               </div>
             );
           })}
-
-          {filteredPosts.length === 0 && (
-            <div className="bg-white py-10 text-center text-sm text-[#888780]">
-              검색 결과가 없습니다.
-            </div>
-          )}
         </div>
       </div>
     </div>

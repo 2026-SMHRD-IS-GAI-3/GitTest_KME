@@ -67,27 +67,6 @@ const CLUB_TIPS: Record<
   },
 };
 
-const RECOMMEND_VIDEOS = [
-  {
-    tag: "X Factor",
-    title: "골프 스윙 유연성 향상 스트레칭 10분",
-    channel: "골프TV",
-    time: "10:24",
-  },
-  {
-    tag: "흉추 회전",
-    title: "흉추 회전 스트레칭 - 백스윙 가동 범위 확보",
-    channel: "GolfFit Korea",
-    time: "8:15",
-  },
-  {
-    tag: "고관절",
-    title: "골퍼를 위한 고관절 유연성 루틴",
-    channel: "스윙닥터",
-    time: "12:03",
-  },
-];
-
 export function AnalysisResult() {
   const navigate = useNavigate();
 
@@ -132,6 +111,10 @@ export function AnalysisResult() {
   const sideVideoUrl = getVideoUrl(analysisResult.sideResultPath);
   const currentVideoUrl = videoTab === "front" ? frontVideoUrl : sideVideoUrl;
 
+  console.log("analysisResult:", analysisResult);
+  console.log("frontVideoUrl:", frontVideoUrl);
+  console.log("sideVideoUrl:", sideVideoUrl);
+
   const totalScore = Math.round(Number(analysisResult.totalScore || 0));
   const addressScore = Math.round(Number(analysisResult.addressScore || 0));
   const backswingScore = Math.round(Number(analysisResult.backswingScore || 0));
@@ -152,24 +135,18 @@ export function AnalysisResult() {
     }
 
     if (sectionName === "BACKSWING") {
-      if (score < 60)
-        return "넓은 어깨와 긴 팔로 인해 백스윙 과회전이 쉽습니다. 코어를 조여 척추 축을 단단히 유지하세요.";
-      if (score < 80)
-        return "어깨 너비가 넓어 회전 범위가 큰 편입니다. 상체 회전 시 척추가 따라 일어서지 않도록 의식하세요.";
+      if (score < 60) return "넓은 어깨와 긴 팔로 인해 백스윙 과회전이 쉽습니다. 코어를 조여 척추 축을 단단히 유지하세요.";
+      if (score < 80) return "어깨 너비가 넓어 회전 범위가 큰 편입니다. 상체 회전 시 척추가 따라 일어서지 않도록 의식하세요.";
     }
 
     if (sectionName === "DOWNSWING") {
-      if (score < 60)
-        return "긴 팔의 원심력으로 상체가 앞으로 쏠리기 쉽습니다. 오른 어깨를 낮게 유지하며 내려오세요.";
-      if (score < 80)
-        return "팔이 길수록 클럽 원심력이 강해집니다. 상체를 뒤에 남기는 느낌으로 내려오세요.";
+      if (score < 60) return "긴 팔의 원심력으로 상체가 앞으로 쏠리기 쉽습니다. 오른 어깨를 낮게 유지하며 내려오세요.";
+      if (score < 80) return "팔이 길수록 클럽 원심력이 강해집니다. 상체를 뒤에 남기는 느낌으로 내려오세요.";
     }
 
     if (sectionName === "IMPACT_FINISH") {
-      if (score < 60)
-        return "긴 팔과 강한 상체 회전력이 골반 전진을 유발합니다. 오른 엉덩이를 뒤로 밀어내는 느낌으로 회전하세요.";
-      if (score < 80)
-        return "어깨 너비가 넓을수록 골반이 밀려나기 쉽습니다. 하체를 고정하고 상체 회전으로만 임팩트를 만드세요.";
+      if (score < 60) return "긴 팔과 강한 상체 회전력이 골반 전진을 유발합니다. 오른 엉덩이를 뒤로 밀어내는 느낌으로 회전하세요.";
+      if (score < 80) return "어깨 너비가 넓을수록 골반이 밀려나기 쉽습니다. 하체를 고정하고 상체 회전으로만 임팩트를 만드세요.";
     }
 
     return "현재 구간은 안정적으로 분석되었습니다. 현재 자세를 유지하면서 반복 연습하세요.";
@@ -226,14 +203,10 @@ export function AnalysisResult() {
     swingStages.find((stage) => stage.id === selectedStage) ?? null;
 
   const getGrade = (score: number) => {
-    if (score >= 90)
-      return { name: "마스터", image: masterImage, color: "#3C3489" };
-    if (score >= 75)
-      return { name: "프로", image: proImage, color: "#0C447C" };
-    if (score >= 60)
-      return { name: "세미프로", image: semiproImage, color: "#1D9E75" };
-    if (score >= 40)
-      return { name: "아마추어", image: amateurImage, color: "#854F0B" };
+    if (score >= 90) return { name: "마스터", image: masterImage, color: "#3C3489" };
+    if (score >= 75) return { name: "프로", image: proImage, color: "#0C447C" };
+    if (score >= 60) return { name: "세미프로", image: semiproImage, color: "#1D9E75" };
+    if (score >= 40) return { name: "아마추어", image: amateurImage, color: "#854F0B" };
     return { name: "루키", image: rookieImage, color: "#888780" };
   };
 
@@ -418,21 +391,11 @@ export function AnalysisResult() {
             {currentVideoUrl ? (
               <video
                 key={currentVideoUrl}
-                src={`${currentVideoUrl}?t=${Date.now()}`}
+                src={currentVideoUrl}
                 controls
                 playsInline
-                preload="auto"
-                muted
-                autoPlay
-                className="w-full h-full object-cover bg-black"
-                onLoadedMetadata={(e) => {
-                  console.log("영상 로드 성공:", currentVideoUrl);
-                  console.log("영상 길이:", e.currentTarget.duration);
-                  e.currentTarget.currentTime = 0.1;
-                }}
-                onError={(e) => {
-                  console.error("영상 로드 실패:", currentVideoUrl, e);
-                }}
+                preload="metadata"
+                className="w-full h-full object-contain bg-black"
               />
             ) : (
               <div className="text-center">
@@ -530,7 +493,7 @@ export function AnalysisResult() {
           )}
         </div>
 
-<div className="bg-white rounded-2xl border border-[#E5E5E5] p-4 mb-5">
+        <div className="bg-white rounded-2xl border border-[#E5E5E5] p-4 mb-5">
           <div className="flex items-center gap-2 mb-4">
             <div className="w-9 h-9 rounded-lg bg-[#E1F5EE] flex items-center justify-center text-base">
               {clubTips.icon}
@@ -580,78 +543,6 @@ export function AnalysisResult() {
           </div>
         </div>
 
-        <div className="bg-white rounded-2xl border border-[#E5E5E5] p-4 mb-5">
-          <div className="flex items-start gap-3 mb-4">
-            <div className="w-9 h-9 rounded-lg bg-[#FFF3C4] flex items-center justify-center text-base flex-shrink-0">
-              🧘
-            </div>
-
-            <div>
-              <h3 className="font-bold text-[#1A1A1A]">
-                유연성 향상 추천 영상
-              </h3>
-              <p className="text-xs text-[#888780] mt-0.5">
-                X Factor 유연성 보통 — 스트레칭 추천
-              </p>
-            </div>
-          </div>
-
-          <div className="p-4 rounded-xl bg-[#FFF8DD] border border-[#F6C84C] mb-4">
-            <div className="flex items-start gap-2">
-              <span className="text-base">📌</span>
-
-              <div>
-                <div className="font-bold text-[#1A1A1A] text-sm mb-1">
-                  X Factor 보통 수준
-                </div>
-                <p className="text-xs text-[#555555] leading-relaxed">
-                  백스윙 탑에서 어깨·골반 회전 차이가 작아 스윙 파워가
-                  손실되고 있습니다.
-                </p>
-              </div>
-            </div>
-          </div>
-
-          
-
-          <div className="flex flex-col gap-3">
-            {RECOMMEND_VIDEOS.map((video, index) => (
-              <div
-                key={index}
-                className="flex gap-3 p-3 rounded-xl border border-[#E5E5E5] bg-white"
-              >
-                <div className="relative w-[112px] h-[64px] rounded-lg bg-gradient-to-br from-[#D8D8D8] to-[#BFBFBF] flex-shrink-0 overflow-hidden">
-                  <div className="absolute inset-0 flex items-center justify-center">
-                    <div className="w-14 h-8 rounded-md bg-[#888780] flex items-center justify-center">
-                      <span className="text-white tracking-widest text-sm">
-                        •••
-                      </span>
-                    </div>
-                  </div>
-
-                  <div className="absolute right-1 bottom-1 px-1.5 py-0.5 rounded bg-[#333333] text-white text-[10px] font-bold">
-                    {video.time}
-                  </div>
-                </div>
-
-                <div className="flex-1 min-w-0">
-                  <span className="inline-block px-2 py-0.5 rounded-full bg-[#DDF5EC] text-[#0F6E56] text-xs mb-1">
-                    {video.tag}
-                  </span>
-
-                  <div className="font-bold text-[#1A1A1A] text-sm leading-snug line-clamp-2">
-                    {video.title}
-                  </div>
-
-                  <div className="text-xs text-[#888780] mt-1">
-                    {video.channel}
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-        
         <div className="flex flex-col gap-3 pb-4">
           <button
             onClick={saveAnalysisResult}

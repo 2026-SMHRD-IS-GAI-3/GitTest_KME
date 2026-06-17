@@ -287,26 +287,26 @@ async def analyze_swing_api(
         feedback_keys = build_feedback_keys(result)
 
         return {
-        "success": True,
-        "analysisId": analysis_id,
+            "success": True,
+            "analysisId": analysis_id,
 
-        "totalScore": result.get("total_score", 0),
-        "addressScore": result.get("address_score", 0),
-        "backswingScore": result.get("backswing_score", 0),
-        "downswingScore": result.get("downswing_score", 0),
-        "impactScore": result.get("impact_score", 0),
+            "totalScore": result.get("total_score", 0),
+            "addressScore": result.get("address_score", 0),
+            "backswingScore": result.get("backswing_score", 0),
+            "downswingScore": result.get("downswing_score", 0),
+            "impactScore": result.get("impact_score", 0),
 
-        "flexibility": result.get("flexibility", ""),
-        "avgXf": result.get("avg_xf", 0),
-        "orbit": result.get("orbit", ""),
+            "flexibility": result.get("flexibility", ""),
+            "avgXf": result.get("avg_xf", 0),
+            "orbit": result.get("orbit", ""),
 
-        "sideResultPath": result.get("side_result_path", ""),
-        "frontResultPath": result.get("front_result_path", ""),
+            "sideResultPath": result.get("side_result_path", ""),
+            "frontResultPath": result.get("front_result_path", ""),
 
-        "feedbackKeys": feedback_keys,
-        "feedbacks": result.get("feedbacks", []),
+            "feedbackKeys": feedback_keys,
+            "feedbacks": result.get("feedbacks", []),
 
-        "section_details": result.get("section_details", {}),
+            "section_details": result.get("section_details", {}),
         }
 
     except Exception as e:

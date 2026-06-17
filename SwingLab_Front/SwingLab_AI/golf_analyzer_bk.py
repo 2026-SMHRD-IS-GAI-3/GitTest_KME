@@ -1035,11 +1035,5 @@ if __name__ == "__main__":
         analysis_id="test_001",
         output_dir="./uploads",
     )
-    
-    print("================================")
-    print("선택 클럽 :", club)
-    print("================================")
-    print(f"standard_{club}.json")
-    print(f"three_lines_{club}.json")
-    print(f"front_standard_{club}.json")
+
     print(result)

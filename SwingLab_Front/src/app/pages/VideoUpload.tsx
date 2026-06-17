@@ -139,7 +139,7 @@ export function VideoUpload() {
       formData.append("ballY", "0");
 
       const res = await axios.post(
-        "http://localhost:5000/analyze-swing",
+        "http://localhost:8000/analyze-swing",
         formData,
         {
           headers: {

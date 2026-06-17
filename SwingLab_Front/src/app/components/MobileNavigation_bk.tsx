@@ -233,14 +233,14 @@ export function MobileNavigation() {
         </div>
       )}
 
-            {showGradeTable && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center px-4">
+      {showGradeTable && (
+        <div className="fixed inset-0 z-50 flex items-end justify-center">
           <div
             className="absolute inset-0 bg-black/40"
             onClick={() => setShowGradeTable(false)}
           />
 
-          <div className="relative w-full max-w-[390px] max-h-[85vh] overflow-y-auto bg-white rounded-2xl p-5 shadow-xl">
+          <div className="relative w-full max-w-[430px] bg-white rounded-t-2xl p-5">
             <div className="flex items-center justify-between mb-4">
               <h2 className="font-bold text-lg text-[#1A1A1A]">
                 전체 등급표
@@ -275,12 +275,18 @@ export function MobileNavigation() {
                       className="w-10 h-10 object-contain"
                     />
 
-                    <span className="font-bold" style={{ color: g.text }}>
+                    <span
+                      className="font-bold"
+                      style={{ color: g.text }}
+                    >
                       {g.grade}
                     </span>
                   </div>
 
-                  <span className="font-medium text-sm" style={{ color: g.text }}>
+                  <span
+                    className="font-medium text-sm"
+                    style={{ color: g.text }}
+                  >
                     {g.range}
                   </span>
                 </div>

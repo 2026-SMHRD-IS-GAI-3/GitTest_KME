@@ -17,6 +17,7 @@ export function Layout() {
     "/survey/result",
     "/password/confirm",
     "/password/change",
+    "/find-account"
   ].includes(location.pathname);
 
   return (

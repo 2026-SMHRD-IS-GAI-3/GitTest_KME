@@ -19,7 +19,6 @@ export function CommunityWrite() {
     tags: "",
   });
 
-  const [file, setFile] = useState<File | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const categories = [
@@ -45,9 +44,12 @@ export function CommunityWrite() {
 
   const loadEditPost = async () => {
     try {
-      const res = await axios.get("http://localhost:8090/SwingLab/communityList", {
-        withCredentials: true,
-      });
+      const res = await axios.get(
+        "http://localhost:8090/SwingLab/communityList",
+        {
+          withCredentials: true,
+        }
+      );
 
       if (res.data.success === true) {
         const foundPost = res.data.data.find(
@@ -78,7 +80,9 @@ export function CommunityWrite() {
   };
 
   const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
+    e: React.ChangeEvent<
+      HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
+    >
   ) => {
     const { name, value } = e.target;
 
@@ -86,23 +90,6 @@ export function CommunityWrite() {
       ...formData,
       [name]: value,
     });
-  };
-
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const selectedFile = e.target.files?.[0];
-
-    if (!selectedFile) return;
-
-    if (
-      !selectedFile.type.startsWith("image/") &&
-      !selectedFile.type.startsWith("video/")
-    ) {
-      alert("이미지 또는 동영상 파일만 업로드할 수 있습니다.");
-      e.target.value = "";
-      return;
-    }
-
-    setFile(selectedFile);
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -116,7 +103,11 @@ export function CommunityWrite() {
       return;
     }
 
-    if (!formData.category || !formData.title.trim() || !formData.content.trim()) {
+    if (
+      !formData.category ||
+      !formData.title.trim() ||
+      !formData.content.trim()
+    ) {
       alert("카테고리, 제목, 내용을 모두 입력해주세요.");
       return;
     }
@@ -124,47 +115,28 @@ export function CommunityWrite() {
     try {
       setIsSubmitting(true);
 
-      let res;
+      const url = isEditMode
+        ? "http://localhost:8090/SwingLab/communityUpdate"
+        : "http://localhost:8090/SwingLab/communityWrite";
 
-      if (isEditMode) {
-        const body = {
-          postId: postId,
-          userId: Number(userId),
-          title: formData.title.trim(),
-          content: formData.content.trim(),
-        };
-
-        res = await axios.post(
-          "http://localhost:8090/SwingLab/communityUpdate",
-          body,
-          {
-            withCredentials: true,
+      const body = isEditMode
+        ? {
+            postId: postId,
+            userId: Number(userId),
+            title: formData.title.trim(),
+            content: formData.content.trim(),
           }
-        );
-      } else {
-        const form = new FormData();
+        : {
+            userId: Number(userId),
+            title: formData.title.trim(),
+            content: formData.content.trim(),
+            category: formData.category,
+            tags: formData.tags,
+          };
 
-        form.append("userId", String(userId));
-        form.append("title", formData.title.trim());
-        form.append("content", formData.content.trim());
-        form.append("category", formData.category);
-        form.append("tags", formData.tags);
-
-        if (file) {
-          form.append("file", file);
-        }
-
-        res = await axios.post(
-          "http://localhost:8090/SwingLab/communityWrite",
-          form,
-          {
-            withCredentials: true,
-            headers: {
-              "Content-Type": "multipart/form-data",
-            },
-          }
-        );
-      }
+      const res = await axios.post(url, body, {
+        withCredentials: true,
+      });
 
       console.log(isEditMode ? "게시글 수정 결과:" : "게시글 작성 결과:", res.data);
 
@@ -284,48 +256,24 @@ export function CommunityWrite() {
           </div>
 
           {!isEditMode && (
-            <>
-              <div className="mb-6">
+            <div className="mb-8">
               <label className="block text-sm font-medium text-[#1A1A1A] mb-2">
-                사진 / 동영상 첨부
+                태그 (선택)
               </label>
 
-              <label className="inline-flex items-center px-4 py-2 bg-[#1D9E75] text-white rounded-lg cursor-pointer hover:bg-[#0F6E56]">
-                파일 선택
-                <input
-                  type="file"
-                  accept="image/*,video/*"
-                  onChange={handleFileChange}
-                  className="hidden"
-                />
-              </label>
+              <input
+                type="text"
+                name="tags"
+                value={formData.tags}
+                onChange={handleChange}
+                placeholder="태그를 쉼표(,)로 구분하여 입력하세요 (예: 드라이버, 스윙교정, 비거리)"
+                className="w-full px-4 py-3 border border-[#E5E5E5] rounded-lg bg-white text-[#1A1A1A] placeholder-[#CCCCCC] focus:outline-none focus:ring-2 focus:ring-[#1D9E75] focus:border-transparent"
+              />
 
-              {file && (
-                <div className="mt-3 text-sm text-[#888780]">
-                  {file.type.startsWith("image/") ? "🖼️" : "🎥"} {file.name}
-                </div>
-              )}
+              <div className="text-xs text-[#888780] mt-2">
+                💡 태그를 추가하면 다른 사용자들이 게시글을 더 쉽게 찾을 수 있습니다
               </div>
-
-              <div className="mb-8">
-                <label className="block text-sm font-medium text-[#1A1A1A] mb-2">
-                  태그 (선택)
-                </label>
-
-                <input
-                  type="text"
-                  name="tags"
-                  value={formData.tags}
-                  onChange={handleChange}
-                  placeholder="태그를 쉼표(,)로 구분하여 입력하세요 (예: 드라이버, 스윙교정, 비거리)"
-                  className="w-full px-4 py-3 border border-[#E5E5E5] rounded-lg bg-white text-[#1A1A1A] placeholder-[#CCCCCC] focus:outline-none focus:ring-2 focus:ring-[#1D9E75] focus:border-transparent"
-                />
-
-                <div className="text-xs text-[#888780] mt-2">
-                  💡 태그를 추가하면 다른 사용자들이 게시글을 더 쉽게 찾을 수 있습니다
-                </div>
-              </div>
-            </>
+            </div>
           )}
 
           <div className="mb-8 p-4 rounded-xl bg-[#F5FAF8] border border-[#E5E5E5]">
@@ -350,7 +298,6 @@ export function CommunityWrite() {
                       <div>
                         • 구체적이고 명확한 제목을 작성하면 더 많은 답변을 받을 수 있습니다
                       </div>
-                      <div>• 사진 또는 동영상을 함께 첨부할 수 있습니다</div>
                       <div>• 관련 없는 광고나 홍보글은 삭제될 수 있습니다</div>
                     </>
                   )}
