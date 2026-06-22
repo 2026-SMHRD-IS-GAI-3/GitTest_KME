@@ -166,17 +166,8 @@ SwingLab은 사용자의 **체형(어깨/골반 비율)** 과 **팔 길이**를 
 |스윙 분석|AI 분석 결과|
 |마이페이지|분석 기록|
 
-예시
+[화면설계서_SwingLab_v1.2.pdf](https://github.com/user-attachments/files/29194178/_SwingLab_v1.2.pdf)
 
-```md
-![login](docs/images/login.png)
-
-![main](docs/images/main.png)
-
-![analysis](docs/images/analysis.png)
-```
-
----
 
 # 팀원 소개
 
