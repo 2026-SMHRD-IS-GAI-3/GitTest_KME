@@ -240,8 +240,6 @@ http://localhost:8080/
 # 📷 시연 영상
 https://github.com/2026-SMHRD-IS-GAI-3/Noblackboard/raw/main/docs/airnote-demo.mp4
 
-> 영상이 보이지 않으면 ▶ [시연 영상 다운로드/재생](docs/airnote-demo.mp4)
-
 ### 🏌️ SwingLab
 
 **체형을 이해하는 AI 골프 스윙 분석 서비스**
