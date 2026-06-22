@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE configuration
+PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-config.dtd">
+
+<configuration>
+
+    <properties resource="com/swinglab/database/db.properties" />
+
+    <typeAliases>
+        <typeAlias alias="DashboardDTO" type="com.swinglab.model.DashboardDTO"/>
+        <typeAlias alias="UserDTO" type="com.swinglab.model.UserDTO"/>
+        <typeAlias alias="MyPageDTO" type="com.swinglab.model.MyPageDTO"/>
+        <typeAlias alias="BodyAnalysisDTO" type="com.swinglab.model.BodyAnalysisDTO"/>
+        <typeAlias alias="CommunityDTO" type="com.swinglab.model.CommunityDTO"/>
+        <typeAlias alias="CommentDTO" type="com.swinglab.model.CommentDTO"/>
+        <typeAlias alias="SwingAnalysisSaveDTO" type="com.swinglab.model.SwingAnalysisSaveDTO"/>
+        <typeAlias alias="CommunityFileDTO" type="com.swinglab.model.CommunityFileDTO"/>
+    </typeAliases>
+
+    <environments default="development">
+        <environment id="development">
+            <transactionManager type="JDBC" />
+
+            <dataSource type="POOLED">
+                <property name="driver" value="${driver}" />
+                <property name="url" value="${url}" />
+                <property name="username" value="${username}" />
+                <property name="password" value="${password}" />
+            </dataSource>
+        </environment>
+    </environments>
+
+    <mappers>
+        <mapper resource="com/swinglab/database/DashboardMapper.xml"/>
+        <mapper resource="com/swinglab/database/UserMapper.xml"/>
+        <mapper resource="com/swinglab/database/CommunityMapper.xml"/>
+        <mapper resource="com/swinglab/database/SwingAnalysisMapper.xml"/>
+    </mappers>
+
+</configuration>

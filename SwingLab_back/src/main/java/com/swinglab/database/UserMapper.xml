@@ -1,0 +1,194 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.swinglab.database.UserMapper">
+
+    <!-- 회원가입 -->
+    <insert id="joinUser" parameterType="com.swinglab.model.UserDTO">
+        INSERT INTO USERS
+        (
+            USER_ID,
+            NAME,
+            EMAIL,
+            PASSWORD,
+            NICKNAME,
+            PHONE,
+            GENDER_TYPE,
+            CREATED_AT
+        )
+        VALUES
+        (
+            NVL((SELECT MAX(USER_ID) FROM USERS), 0) + 1,
+            #{name},
+            #{email},
+            #{password},
+            #{nickname},
+            #{phone},
+            UPPER(SUBSTR(#{gender_type}, 1, 1)),
+            SYSDATE
+        )
+    </insert>
+
+    <!-- 이메일 중복 체크 -->
+    <select id="checkEmail" parameterType="string" resultType="string">
+        SELECT EMAIL
+        FROM USERS
+        WHERE EMAIL = #{email}
+    </select>
+
+    <!-- 닉네임 중복 체크 -->
+    <select id="checkNickname" parameterType="string" resultType="string">
+        SELECT NICKNAME
+        FROM USERS
+        WHERE NICKNAME = #{nickname}
+    </select>
+
+    <!-- 로그인 -->
+    <select id="login"
+            parameterType="com.swinglab.model.UserDTO"
+            resultType="com.swinglab.model.UserDTO">
+        SELECT
+            USER_ID AS userId,
+            NAME AS name,
+            EMAIL AS email,
+            PASSWORD AS password,
+            NICKNAME AS nickname,
+            PHONE AS phone,
+            GENDER_TYPE AS gender_type
+        FROM USERS
+        WHERE EMAIL = #{email}
+        AND PASSWORD = #{password}
+    </select>
+
+    <!-- 아이디 찾기: 이름 + 휴대폰번호로 이메일 찾기 -->
+    <select id="findEmail"
+            parameterType="com.swinglab.model.UserDTO"
+            resultType="string">
+        SELECT EMAIL
+        FROM USERS
+        WHERE NAME = #{name}
+        AND PHONE = #{phone}
+    </select>
+
+    <!-- 비밀번호 찾기: 이름 + 이메일 + 휴대폰번호로 사용자 확인 -->
+    <select id="findPasswordUser"
+            parameterType="com.swinglab.model.UserDTO"
+            resultType="com.swinglab.model.UserDTO">
+        SELECT
+            NAME AS name,
+            EMAIL AS email,
+            PASSWORD AS password,
+            NICKNAME AS nickname,
+            PHONE AS phone,
+            GENDER_TYPE AS gender_type
+        FROM USERS
+        WHERE NAME = #{name}
+        AND EMAIL = #{email}
+        AND PHONE = #{phone}
+    </select>
+
+    <!-- 비밀번호 재설정 -->
+    <update id="updatePasswordByEmail"
+            parameterType="com.swinglab.model.UserDTO">
+        UPDATE USERS
+        SET PASSWORD = #{password},
+            UPDATED_AT = SYSDATE
+        WHERE EMAIL = #{email}
+    </update>
+
+    <!-- 체형 분석 결과 저장 -->
+    <insert id="saveBodyAnalysis"
+            parameterType="com.swinglab.model.BodyAnalysisDTO">
+        INSERT INTO USER_BODY_PROFILE
+        (
+            USER_ID,
+            HEIGHT,
+            WEIGHT,
+            SH_HIP_RATIO,
+            ARM_LENGTH_RATIO,
+            ARM_LENGTH_TYPE,
+            HAND_TYPE,
+            BODY_CODE,
+            UPDATED_AT,
+            CREATED_AT
+        )
+        VALUES
+        (
+            #{userId},
+            #{height},
+            #{weight},
+            #{shoulderHipRatio},
+            #{armLengthRatio},
+            #{armLengthType},
+            #{handType},
+            #{bodyCode},
+            SYSDATE,
+            SYSDATE
+        )
+    </insert>
+
+    <!-- 체형 분석 결과 존재 여부 확인 -->
+    <select id="existsBodyProfile"
+            parameterType="int"
+            resultType="int">
+        SELECT COUNT(*)
+        FROM USER_BODY_PROFILE
+        WHERE USER_ID = #{userId}
+    </select>
+
+    <!-- 마이페이지 회원 + 체형 분석 결과 조회 -->
+    <select id="getMyPageInfo"
+            parameterType="int"
+            resultType="com.swinglab.model.MyPageDTO">
+        SELECT
+            U.NAME AS name,
+            U.EMAIL AS email,
+            U.PHONE AS phone,
+            B.BODY_CODE AS bodyCode,
+            B.ARM_LENGTH_TYPE AS armLengthType,
+            B.HAND_TYPE AS handType,
+            B.HEIGHT AS height,
+            B.WEIGHT AS weight
+        FROM USERS U
+        LEFT JOIN USER_BODY_PROFILE B
+            ON U.USER_ID = B.USER_ID
+        WHERE U.USER_ID = #{userId}
+    </select>
+
+    <!-- 비밀번호 확인 -->
+    <select id="checkPassword"
+            parameterType="map"
+            resultType="int">
+        SELECT COUNT(*)
+        FROM USERS
+        WHERE EMAIL = #{email}
+        AND PASSWORD = #{password}
+    </select>
+
+    <!-- 회원 기본 정보 수정 -->
+    <update id="updateUserProfile"
+            parameterType="map">
+        UPDATE USERS
+        SET EMAIL = #{email},
+            PHONE = #{phone},
+            UPDATED_AT = SYSDATE
+        WHERE EMAIL = #{currentEmail}
+    </update>
+
+    <!-- 체형 정보 수정 -->
+    <update id="updateBodyProfile"
+            parameterType="map">
+        UPDATE USER_BODY_PROFILE
+        SET HEIGHT = #{height},
+            WEIGHT = #{weight},
+            BODY_CODE = #{bodyCode},
+            UPDATED_AT = SYSDATE
+        WHERE USER_ID = (
+            SELECT USER_ID
+            FROM USERS
+            WHERE EMAIL = #{email}
+        )
+    </update>
+
+</mapper>

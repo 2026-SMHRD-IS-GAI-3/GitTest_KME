@@ -1,0 +1,254 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.swinglab.database.SwingAnalysisMapper">
+
+    <select id="selectBodyProfileByUserId"
+            parameterType="int"
+            resultType="com.swinglab.model.SwingAnalysisSaveDTO">
+        SELECT
+            BODY_CODE AS bodyCode,
+            ARM_LENGTH_TYPE AS armLengthType,
+            HAND_TYPE AS handType
+        FROM USER_BODY_PROFILE
+        WHERE USER_ID = #{userId}
+    </select>
+
+    <insert id="insertFrontSwingVideo"
+            parameterType="com.swinglab.model.SwingAnalysisSaveDTO">
+
+        <selectKey keyProperty="frontVideoId"
+                   resultType="int"
+                   order="BEFORE">
+            SELECT SEQ_SWING_VIDEO.NEXTVAL FROM DUAL
+        </selectKey>
+
+        INSERT INTO SWING_VIDEO
+        (
+            VIDEO_ID,
+            USER_ID,
+            VIDEO_URL,
+            VIDEO_TYPE,
+            CLUB_TYPE,
+            ORIGINAL_FILENAME,
+            UPDATED_AT,
+            UPLOADED_AT
+        )
+        VALUES
+        (
+            #{frontVideoId},
+            #{userId},
+            #{frontVideoUrl},
+            'FRONT',
+            #{clubType},
+            'front_result.mp4',
+            SYSDATE,
+            SYSDATE
+        )
+    </insert>
+
+    <insert id="insertSideSwingVideo"
+            parameterType="com.swinglab.model.SwingAnalysisSaveDTO">
+
+        <selectKey keyProperty="sideVideoId"
+                   resultType="int"
+                   order="BEFORE">
+            SELECT SEQ_SWING_VIDEO.NEXTVAL FROM DUAL
+        </selectKey>
+
+        INSERT INTO SWING_VIDEO
+        (
+            VIDEO_ID,
+            USER_ID,
+            VIDEO_URL,
+            VIDEO_TYPE,
+            CLUB_TYPE,
+            ORIGINAL_FILENAME,
+            UPDATED_AT,
+            UPLOADED_AT
+        )
+        VALUES
+        (
+            #{sideVideoId},
+            #{userId},
+            #{sideVideoUrl},
+            'SIDE',
+            #{clubType},
+            'side_result.mp4',
+            SYSDATE,
+            SYSDATE
+        )
+    </insert>
+
+    <insert id="insertSwingAnalysis"
+            parameterType="com.swinglab.model.SwingAnalysisSaveDTO">
+
+        <selectKey keyProperty="analysisId"
+                   resultType="int"
+                   order="BEFORE">
+            SELECT SEQ_SWING_ANALYSIS.NEXTVAL FROM DUAL
+        </selectKey>
+
+        INSERT INTO SWING_ANALYSIS
+        (
+            ANALYSIS_ID,
+            VIDEO_ID,
+            SIDE_VIDEO_ID,
+            USER_ID,
+            CLUB_TYPE,
+            BODY_CODE,
+            ARM_LENGTH_TYPE,
+            HAND_TYPE,
+            TOTAL_SCORE,
+            X_FACTOR,
+            ANALYSIS_STATUS,
+            UPDATED_AT,
+            CREATED_AT
+        )
+        VALUES
+        (
+            #{analysisId},
+            #{frontVideoId},
+            #{sideVideoId},
+            #{userId},
+            #{clubType},
+            #{bodyCode},
+            #{armLengthType},
+            #{handType},
+            #{totalScore},
+            #{xFactor},
+            'DONE',
+            SYSDATE,
+            SYSDATE
+        )
+    </insert>
+
+    <insert id="insertSectionScore"
+            parameterType="map">
+        INSERT INTO SWING_SECTION_SCORE
+        (
+            SECTION_SCORE_ID,
+            ANALYSIS_ID,
+            SECTION_NAME,
+            SPINE_ANGLE,
+            KNEE_ANGLE,
+            SHOULDER_ROTATION,
+            PELVIS_ROTATION,
+            ARM_POSITION_SCORE,
+            SHOULDER_DEVIATION_RATIO,
+            SECTION_SCORE
+        )
+        VALUES
+        (
+            SEQ_SWING_SECTION_SCORE.NEXTVAL,
+            #{analysisId},
+            #{sectionName},
+            #{spineAngle},
+            #{kneeAngle},
+            #{shoulderRotation},
+            #{pelvisRotation},
+            #{armPositionScore},
+            #{shoulderDeviationRatio},
+            #{sectionScore}
+        )
+    </insert>
+
+    <insert id="insertFeedback"
+            parameterType="map">
+        INSERT INTO FEEDBACK
+        (
+            FEEDBACK_ID,
+            ANALYSIS_ID,
+            SECTION_NAME,
+            PROBLEM_TYPE,
+            FEEDBACK_TEXT,
+            CORRECTION_GUIDE,
+            MEASURED_VALUE,
+            LIMIT_VALUE,
+            UPDATED_AT,
+            CREATED_AT
+        )
+        VALUES
+        (
+            SEQ_FEEDBACK.NEXTVAL,
+            #{analysisId},
+            #{sectionName},
+            #{problemType},
+            #{feedbackText},
+            #{correctionGuide},
+            #{measuredValue},
+            #{limitValue},
+            SYSDATE,
+            SYSDATE
+        )
+    </insert>
+
+    <select id="selectHistoryList"
+            parameterType="int"
+            resultType="com.swinglab.model.SwingAnalysisSaveDTO">
+        SELECT
+            A.ANALYSIS_ID AS analysisId,
+            A.USER_ID AS userId,
+            A.CLUB_TYPE AS clubType,
+            A.TOTAL_SCORE AS totalScore,
+            A.X_FACTOR AS xFactor,
+            A.ANALYSIS_STATUS AS analysisStatus,
+            TO_CHAR(A.CREATED_AT, 'YYYY-MM-DD HH24:MI') AS createdAt
+        FROM SWING_ANALYSIS A
+        WHERE A.USER_ID = #{userId}
+        ORDER BY A.CREATED_AT DESC
+    </select>
+
+    <select id="selectHistoryDetail"
+            parameterType="int"
+            resultType="com.swinglab.model.SwingAnalysisSaveDTO">
+        SELECT
+            A.ANALYSIS_ID AS analysisId,
+            A.VIDEO_ID AS frontVideoId,
+            A.SIDE_VIDEO_ID AS sideVideoId,
+            A.USER_ID AS userId,
+            A.CLUB_TYPE AS clubType,
+            A.BODY_CODE AS bodyCode,
+            A.ARM_LENGTH_TYPE AS armLengthType,
+            A.HAND_TYPE AS handType,
+            A.TOTAL_SCORE AS totalScore,
+            A.X_FACTOR AS xFactor,
+            FV.VIDEO_URL AS frontVideoUrl,
+            SV.VIDEO_URL AS sideVideoUrl,
+            TO_CHAR(A.CREATED_AT, 'YYYY-MM-DD HH24:MI') AS createdAt
+        FROM SWING_ANALYSIS A
+        LEFT JOIN SWING_VIDEO FV
+            ON A.VIDEO_ID = FV.VIDEO_ID
+        LEFT JOIN SWING_VIDEO SV
+            ON A.SIDE_VIDEO_ID = SV.VIDEO_ID
+        WHERE A.ANALYSIS_ID = #{analysisId}
+    </select>
+
+    <select id="selectSectionScores"
+            parameterType="int"
+            resultType="map">
+        SELECT
+            SECTION_NAME AS sectionName,
+            SPINE_ANGLE AS spineAngle,
+            KNEE_ANGLE AS kneeAngle,
+            SHOULDER_ROTATION AS shoulderRotation,
+            PELVIS_ROTATION AS pelvisRotation,
+            ARM_POSITION_SCORE AS armPositionScore,
+            SHOULDER_DEVIATION_RATIO AS shoulderDeviationRatio,
+            SECTION_SCORE AS sectionScore
+        FROM SWING_SECTION_SCORE
+        WHERE ANALYSIS_ID = #{analysisId}
+        ORDER BY SECTION_SCORE_ID ASC
+    </select>
+
+    <select id="selectFeedbacks"
+            parameterType="int"
+            resultType="string">
+        SELECT FEEDBACK_TEXT
+        FROM FEEDBACK
+        WHERE ANALYSIS_ID = #{analysisId}
+        ORDER BY FEEDBACK_ID ASC
+    </select>
+
+</mapper>
