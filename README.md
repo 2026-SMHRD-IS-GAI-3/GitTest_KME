@@ -211,32 +211,6 @@ SwingLab은 사용자의 **체형(어깨/골반 비율)** 과 **팔 길이**를 
 </tr>
 </table>
 
-# 실행 방법
-
-```bash
-# Clone
-
-git clone https://github.com/Repository.git
-
-# Flask 실행
-
-python app.py
-
-# Tomcat 실행
-
-Apache Tomcat 9
-
-# Oracle 연결
-
-db.properties 설정
-
-# 실행
-
-http://localhost:8080/
-```
-
----
-
 # 📷 시연 영상
 https://github.com/2026-SMHRD-IS-GAI-3/Noblackboard/raw/main/docs/airnote-demo.mp4
 
