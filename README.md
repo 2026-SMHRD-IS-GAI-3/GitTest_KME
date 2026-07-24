@@ -152,7 +152,8 @@ SwingLab은 사용자의 **체형(어깨/골반 비율)** 과 **팔 길이**를 
 <img width="1024" height="1536" alt="DSADSADDSD" src="https://github.com/user-attachments/assets/04da0aec-7a10-45ad-80ed-8d34350cf542" />
 
 # ER Diagram
-<img width="1870" height="1450" alt="KakaoTalk_20260617_091632583" src="https://github.com/user-attachments/assets/1907861d-4a04-4d70-9406-5e300c22522d" />
+<img width="1261" height="864" alt="image" src="https://github.com/user-attachments/assets/284a2607-3f37-4c17-8e6b-414f39b1c499" />
+
 
 
 # 화면 구성
